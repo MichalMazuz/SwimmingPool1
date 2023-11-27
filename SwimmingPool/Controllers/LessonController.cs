@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SwimmingPool.Entities;
+using Swim.Core.Entities;
+using Swim.Core.Services;
+using Swim.Service;
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -10,25 +13,25 @@ namespace SwimmingPool.Controllers
     [ApiController]
     public class LessonController : ControllerBase
     {
-        private readonly DataContext _context;
-        public LessonController(DataContext context)
+        private readonly ILessonService _lessonService;
+        public LessonController(ILessonService lessonService)
         {
-            _context = context;
+            _lessonService = lessonService;
         }
         // GET: api/<LessonController>
         [HttpGet]
-        public IEnumerable<Lesson> Get()
+        public ActionResult Get()
         {
-            return _context.lessons;
+            return Ok(_lessonService.GetAllLessons());
         }
 
         // GET api/<LessonController>/5
         [HttpGet("{id}")]
         public ActionResult<Lesson> Get(int id)
         {
-            var less = _context.lessons.Find(l => l.LessonId == id);
+            var less = _lessonService.LessonGetLessonById(id);
             if (less == null)
-                return NotFound();
+                return  NotFound();
             return less;
         }
 
@@ -36,20 +39,14 @@ namespace SwimmingPool.Controllers
         [HttpPost]
         public void Post([FromBody] Lesson less)
         {
-            _context.lessons.Add(new Lesson { LessonId = _context.LessonCount++, LessonDescription = less.LessonDescription, LessonHour = less.LessonHour, TeacherId = less.TeacherId });
-
+            _lessonService.PostLesson(less);
         }
 
         // PUT api/<LessonController>/5
         [HttpPut("{id}")]
         public ActionResult Put(int id, [FromBody] Lesson less)
         {
-            var lesson = _context.lessons.Find(l => l.LessonId == id);
-            if (lesson == null)
-                return NotFound();
-            lesson.LessonDescription = less.LessonDescription;
-            lesson.LessonHour = less.LessonHour;
-            lesson.TeacherId = less.TeacherId;
+            _lessonService.PutLesson(less, id);
             return Ok();
         }
 
@@ -57,10 +54,7 @@ namespace SwimmingPool.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            var less = _context.lessons.Find(l => l.LessonId == id);
-            if (less == null)
-                return NotFound();
-            _context.lessons.Remove(less);
+            _lessonService.DeleteLesson(id);
             return Ok();
         }
     }

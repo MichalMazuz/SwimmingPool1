@@ -1,4 +1,4 @@
-﻿namespace SwimmingPool.Entities
+﻿namespace Swim.Core.Entities
 {
     public class Presence
     {

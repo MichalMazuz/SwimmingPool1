@@ -1,4 +1,4 @@
-﻿namespace SwimmingPool.Entities
+﻿namespace Swim.Core.Entities
 {
     public class Student
     {
@@ -10,7 +10,6 @@
         public string ParentsPhone { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string? StudentEmail { get; set; }
-
         public bool StudentStatus { get; set; }
         public string? StudentStatusDescription { get; set; }
       

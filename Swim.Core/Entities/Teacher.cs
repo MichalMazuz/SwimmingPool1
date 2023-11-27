@@ -1,4 +1,4 @@
-﻿namespace SwimmingPool.Entities
+﻿namespace Swim.Core.Entities
 {
     public class Teacher
     {
@@ -9,7 +9,7 @@
         public string TeacherPhone { get; set; }
         public string? TeacherEmail { get; set; }
         public bool TeacherStatus { get; set; }
-        //public Enum TeacherDays { get; }
+        public DayOfWeek TeacherDays { get; set; }
         public DateTime TeacherHour { get; set; }
 
       

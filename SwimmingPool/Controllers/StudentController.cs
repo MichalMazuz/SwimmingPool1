@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SwimmingPool.Entities;
-using System.Net;
+using Microsoft.Extensions.Logging;
+using Swim.Core.Entities;
+using Swim.Core.Services;
+using Swim.Service;
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -10,67 +13,48 @@ namespace SwimmingPool.Controllers
     [ApiController]
     public class StudentController : ControllerBase
     {
-        private readonly DataContext _context;
-        public StudentController(DataContext context)
+        private readonly IStudentService _studentService;
+        public StudentController(IStudentService studentService)
         {
-            _context = context;
+            _studentService = studentService;
         }
-
-        // GET: api/<StudentController>
+        // GET: api/<LessonController>
         [HttpGet]
-        public IEnumerable<Student> Get()
+        public ActionResult Get()
         {
-            return _context.students;
+            return Ok(_studentService.GetAllStudent());
         }
 
-        // GET api/<StudentController>/5
+        // GET api/<LessonController>/5
         [HttpGet("{id}")]
         public ActionResult<Student> Get(int id)
         {
-            var st = _context.students.Find(s => s.StudentId == id);
-            if (st == null)
+            var stu = _studentService.GetStudentById(id);
+            if (stu == null)
                 return NotFound();
-            return st;
+            return stu;
         }
 
-        // POST api/<StudentController>
+        // POST api/<LessonController>
         [HttpPost]
-        public ActionResult Post([FromBody] Student s)
+        public void Post([FromBody] Student stu)
         {
-            //if (s.StudentId.ToString().Length != 9)
-            //    return BadRequest();
-            _context.students.Add(new Student { StudentId = _context.StudentCount++, StudentFirstName = s.StudentFirstName, StudentLastName = s.StudentLastName, Address = s.Address, StudentPhone = s.StudentPhone, ParentsPhone = s.ParentsPhone, DateOfBirth = s.DateOfBirth, StudentEmail = s.StudentEmail, StudentStatus = s.StudentStatus, StudentStatusDescription = s.StudentStatusDescription });
-            return Ok();
-
+            _studentService.PostStudent(stu);
         }
 
-        // PUT api/<StudentController>/5
+        // PUT api/<LessonController>/5
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] Student s)
+        public ActionResult Put(int id, [FromBody] Student stu)
         {
-            var st = _context.students.Find(s => s.StudentId == id);
-            if (st == null)
-                return NotFound();
-            st.StudentEmail = s.StudentEmail;
-            st.StudentStatus = s.StudentStatus;
-            st.StudentPhone = s.StudentPhone;
-            st.StudentLastName = s.StudentLastName;
-            st.DateOfBirth = s.DateOfBirth;
-            st.StudentPhone = s.StudentPhone; ;
-            st.ParentsPhone = s.ParentsPhone;
-            st.StudentFirstName = s.StudentFirstName;
-            st.StudentStatusDescription = s.StudentStatusDescription;
+            _studentService.PutStudent(stu, id);
             return Ok();
         }
 
-        // DELETE api/<StudentController>/5
+        // DELETE api/<LessonController>/5
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            var st = _context.students.Find(s => s.StudentId == id);
-            if (st == null)
-                return NotFound();
-            _context.students.Remove(st);
+            _studentService.DeleteStudent(id);
             return Ok();
         }
     }

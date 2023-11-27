@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SwimmingPool.Entities;
+using Microsoft.Extensions.Logging;
+using Swim.Core.Entities;
+using Swim.Core.Services;
+using Swim.Service;
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -9,66 +13,48 @@ namespace SwimmingPool.Controllers
     [ApiController]
     public class TeacherController : ControllerBase
     {
-        private readonly DataContext _context;
-        public TeacherController(DataContext context)
+        private readonly ITeacherService _teacherService;
+        public TeacherController(ITeacherService teacherService)
         {
-            _context = context;
+            _teacherService = teacherService;
         }
-
-        // GET: api/<TeacherController>
+        // GET: api/<LessonController>
         [HttpGet]
-        public IEnumerable<Teacher> Get()
+        public ActionResult Get()
         {
-            return _context.teachers;
+            return Ok(_teacherService.GetAllTeacher());
         }
 
-        // GET api/<TeacherController>/5
+        // GET api/<LessonController>/5
         [HttpGet("{id}")]
         public ActionResult<Teacher> Get(int id)
         {
-            var teach = _context.teachers.Find(t => t.TeacherId == id);
-            if (teach == null)
+            var less = _teacherService.GetTeacherById(id);
+            if (less == null)
                 return NotFound();
-            return teach;
+            return less;
         }
 
-        // POST api/<TeacherController>
+        // POST api/<LessonController>
         [HttpPost]
-        public ActionResult Post([FromBody] Teacher t)
+        public void Post([FromBody] Teacher less)
         {
-            //if (t.TeacherId.ToString().Length != 9)
-            //    return BadRequest();
-            _context.teachers.Add(new Teacher { TeacherId = _context.TeacherCount++, TeacherFirstName = t.TeacherFirstName, TeacherLastName = t.TeacherLastName, TeacherAddress = t.TeacherAddress, TeacherPhone = t.TeacherPhone, TeacherEmail = t.TeacherEmail, TeacherStatus = t.TeacherStatus, /*TeacherDays = t.TeacherDays,*/ TeacherHour = t.TeacherHour });
-            return Ok();
-
+            _teacherService.PostTeacher(less);
         }
 
-        // PUT api/<TeacherController>/5
+        // PUT api/<LessonController>/5
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] Teacher t)
+        public ActionResult Put(int id, [FromBody] Teacher less)
         {
-            var teach = _context.teachers.Find(t => t.TeacherId == id);
-            if (teach == null)
-                return NotFound();
-            teach.TeacherHour = t.TeacherHour;
-            teach.TeacherStatus = t.TeacherStatus;
-            teach.TeacherPhone = t.TeacherPhone;
-            teach.TeacherEmail = t.TeacherEmail;
-            teach.TeacherAddress = t.TeacherAddress;
-            teach.TeacherFirstName = t.TeacherFirstName;
-            teach.TeacherLastName = t.TeacherLastName;
-            //teach.TeacherDays = t.TeacherDays;
+            _teacherService.PutTeacher(less, id);
             return Ok();
         }
 
-        // DELETE api/<TeacherController>/5
+        // DELETE api/<LessonController>/5
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            var teach = _context.teachers.Find(t => t.TeacherId == id);
-            if (teach == null)
-                return NotFound();
-            _context.teachers.Remove(teach);
+            _teacherService.DeleteTeacher(id);
             return Ok();
         }
     }

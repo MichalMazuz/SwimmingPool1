@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SwimmingPool.Entities;
+using Microsoft.Extensions.Logging;
+using Swim.Core.Entities;
+using Swim.Core.Services;
+using Swim.Service;
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -9,49 +13,43 @@ namespace SwimmingPool.Controllers
     [ApiController]
     public class PresenceController : ControllerBase
     {
-        private readonly DataContext _context;
-        public PresenceController(DataContext context)
+        private readonly IPresenceService _presenceService;
+        public PresenceController(IPresenceService presenceService)
         {
-            _context = context;
+            _presenceService = presenceService;
         }
-
-        // GET: api/<PresenceController>
+        // GET: api/<LessonController>
         [HttpGet]
-        public IEnumerable<Presence> Get()
+        public ActionResult Get()
         {
-            return _context.presences;
+            return Ok(_presenceService.GetAllPresence());
         }
 
-        // GET api/<PresenceController>/5
-        [HttpGet("{id,id,id}")]
+        // GET api/<LessonController>/5
+        [HttpGet("{id}")]
         public ActionResult<Presence> Get(int idT, int idL, int idS)
         {
-            var pre = _context.presences.Find(p => p.TeacherId == idT && p.StudentId == idS && p.LessonId == idL);
-            if (pre == null)
-                return NotFound();
-            return pre;
+            var presence = _presenceService.GetPresenceById(idT,idL,idS);
+            if (presence == null)
+                return  NotFound();
+            return presence;
         }
 
-        // POST api/<PresenceController>
+        // POST api/<LessonController>
         [HttpPost]
-        public void Post([FromBody] Presence p)
+        public void Post([FromBody] Presence presence)
         {
-            _context.presences.Add(new Presence { LessonId = p.LessonId, TeacherId = p.TeacherId, StudentId = p.StudentId, IsPresent = p.IsPresent });
-
+            _presenceService.PostPresence(presence);
         }
 
-        // PUT api/<PresenceController>/5
-        [HttpPut("{id,id,id}")]
-        public ActionResult Put(int idT, int idL, int idS, [FromBody] Presence p)
+        // PUT api/<LessonController>/5
+        [HttpPut("{id}")]
+        public ActionResult Put(int id, [FromBody] Presence presence)
         {
-            var pre = _context.presences.Find(p => p.TeacherId == idT && p.StudentId == idS && p.LessonId == idL);
-            if (pre == null)
-                return NotFound();
-            pre.IsPresent = p.IsPresent;
+            _presenceService.PostPresence(presence);
             return Ok();
         }
 
-        // DELETE api/<PresenceController>/5
-
+       
     }
 }
