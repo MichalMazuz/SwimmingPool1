@@ -19,7 +19,7 @@ namespace Swim.Data.Repositories
 
         public ActionResult DeleteLesson(int id)
         {
-            var less = _context.lessons.Find(l => l.LessonId == id);
+            var less = _context.lessons.ToList().Find(l => l.LessonId == id);
             if (less == null)
                 return new NotFoundResult();
             _context.lessons.Remove(less);
@@ -28,12 +28,12 @@ namespace Swim.Data.Repositories
 
         public List<Lesson> GetAllLessons()
         {
-            return _context.lessons;
+            return _context.lessons.ToList();
         }
 
         public ActionResult<Lesson> LessonGetLessonById(int id)
         {
-            var less = _context.lessons.Find(l => l.LessonId == id);
+            var less = _context.lessons.ToList().Find(l => l.LessonId == id);
             if (less == null)
                 return new NotFoundResult();
             return less;
@@ -46,7 +46,7 @@ namespace Swim.Data.Repositories
 
         public ActionResult PutLesson(Lesson less, int id)
         {
-            var lesson = _context.lessons.Find(l => l.LessonId == id);
+            var lesson = _context.lessons.ToList().Find(l => l.LessonId == id);
             if (lesson == null)
                 return  new NotFoundResult();
             lesson.LessonDescription = less.LessonDescription;

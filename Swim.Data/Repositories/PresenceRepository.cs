@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swim.Core.Entities;
 using Swim.Core.Repositories;
 using System;
@@ -15,12 +16,12 @@ namespace Swim.Data.Repositories
 
         public List<Presence> GetAllPresence()
         {
-            return _context.presences;
+            return _context.presences.ToList();
         }
 
         public ActionResult<Presence> GetPresenceById(int idT, int idL, int idS)
         {
-            var pre = _context.presences.Find(p => p.TeacherId == idT && p.StudentId == idS && p.LessonId == idL);
+            var pre = _context.presences.ToList().Find(p => p.TeacherId == idT && p.StudentId == idS && p.LessonId == idL);
             if (pre == null)
                 return new NotFoundResult();
             return pre;
@@ -30,10 +31,12 @@ namespace Swim.Data.Repositories
         {
             _context.presences.Add(new Presence { LessonId = p.LessonId, TeacherId = p.TeacherId, StudentId = p.StudentId, IsPresent = p.IsPresent });
         }
+       
+
 
         public ActionResult PutPresence(Presence p, int idT, int idL, int idS)
         {
-            var pre = _context.presences.Find(p => p.TeacherId == idT && p.StudentId == idS && p.LessonId == idL);
+            var pre = _context.presences.ToList().Find(p => p.TeacherId == idT && p.StudentId == idS && p.LessonId == idL);
             if (pre == null)
                 return new NotFoundResult();
             pre.IsPresent = p.IsPresent;

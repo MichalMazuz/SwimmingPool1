@@ -19,7 +19,7 @@ namespace Swim.Data.Repositories
 
         public ActionResult DeleteTeacher(int id)
         {
-            var teach = _context.teachers.Find(t => t.TeacherId == id);
+            var teach = _context.teachers.ToList().Find(t => t.TeacherId == id);
             if (teach == null)
                 return new NotFoundResult();
             _context.teachers.Remove(teach);
@@ -28,12 +28,12 @@ namespace Swim.Data.Repositories
 
         public List<Teacher> GetAllTeacher()
         {
-            return _context.teachers;
+            return _context.teachers.ToList();
         }
 
         public ActionResult<Teacher> GetTeacherById(int id)
         {
-            var teach = _context.teachers.Find(t => t.TeacherId == id);
+            var teach = _context.teachers.ToList().Find(t => t.TeacherId == id);
             if (teach == null)
                 return new NotFoundResult();
             return teach;
@@ -46,7 +46,7 @@ namespace Swim.Data.Repositories
 
         public ActionResult PutTeacher(Teacher t, int id)
         {
-            var teach = _context.teachers.Find(t => t.TeacherId == id);
+            var teach = _context.teachers.ToList().Find(t => t.TeacherId == id);
             if (teach == null)
                 return new NotFoundResult();
             teach.TeacherHour = t.TeacherHour;

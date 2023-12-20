@@ -15,7 +15,7 @@ namespace Swim.Data.Repositories
 
         public ActionResult DeleteStudent(int id)
         {
-            var st = _context.students.Find(s => s.StudentId == id);
+            var st = _context.students.ToList().Find(s => s.StudentId == id);
             if (st == null)
                 return new NotFoundResult();
             _context.students.Remove(st);
@@ -24,12 +24,12 @@ namespace Swim.Data.Repositories
 
         public List<Student> GetAllStudent()
         {
-            return _context.students;
+            return _context.students.ToList();
         }
 
         public ActionResult<Student> GetStudentById(int id)
         {
-            var st = _context.students.Find(s => s.StudentId == id);
+            var st = _context.students.ToList().Find(s => s.StudentId == id);
             if (st == null)
                 return new NotFoundResult();
             return st;
@@ -42,7 +42,7 @@ namespace Swim.Data.Repositories
 
         public ActionResult PutStudent(Student s, int id)
         {
-            var st = _context.students.Find(s => s.StudentId == id);
+            var st = _context.students.ToList().Find(s => s.StudentId == id);
             if (st == null)
                 return new NotFoundResult();
             st.StudentEmail = s.StudentEmail;
